@@ -115,7 +115,61 @@ hist(totalstep$totalsteps, breaks = 9, main = "Histogram of Total Steps Per Day 
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
 
+```r
+options(scipen=999)
+newmean <- mean(totalstep$totalsteps)
+newmedian <- median(totalstep$totalsteps)
+```
+
 The number of invalid/missing values in the data set is 2304.
-By imputing NA data with the average time interval of the missing time frame, it causes the data to be closer to a gaussian distribution.
+By imputing NA data with the average time interval of the missing time frame, it causes the data to be closer to a gaussian distribution. It also reduces the frequency of days where total step taken is artificially low due to lack of data.
+The new mean is 10766.1886792 , and the new median is 10766.1886792 after imputing the data. The fact that mean = median shows that the data is becoming more normal.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+Convert and add the date column of date objects to a final data frame with the date classified as weekend or weekday
+
+```r
+library(lubridate)
+```
+
+```
+## Warning: package 'lubridate' was built under R version 3.2.1
+```
+
+```r
+library(ggplot2)
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.2.1
+```
+
+```r
+adate <- strptime(act$date, format = "%Y-%m-%d")
+activity <- cbind(act, adate)
+
+convertday <- function(x){
+    if (x == "Saturday" || x == "Sunday"){
+        return ("weekend")
+    }
+    else
+        return ("weekday")
+}
+
+activity <- mutate(activity, day= weekdays(activity$adate))
+daytype <- character(length = 17568)
+for (i in 1:length(daytype)){
+    daytype[i] <- convertday(activity$day[i])
+}
+
+activity<-cbind(activity, daytype)
+
+daytypeact <- group_by(activity, daytype, interval) %>% summarise(avgsteps = mean(steps, na.rm=TRUE))
+
+activityplot <- ggplot(data = daytypeact, aes(interval, avgsteps)) + geom_line(size=1) + facet_grid(. ~daytype) + labs(title = "weekday vs weekend avg steps / interval") + labs(y = "Average number of steps")
+print(activityplot)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+
+There seems to be more activity around the 800-900 interval on weekdays, although the activity on weekends seems to be higher throughout the day. This may reflect the energy people must spend walking to work on weekdays vs going out on weekends.
