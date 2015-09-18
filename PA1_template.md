@@ -30,14 +30,6 @@ str(a)
 ##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ```
 
-Then split the data frame into convenient variables representing each name
-
-
-```r
-steps <- a$steps
-dates <- a$date
-interval <- a$interval
-```
 
 ## What is mean total number of steps taken per day?
 First determine the total number of steps per day; placed in a variable sumday
@@ -70,7 +62,7 @@ sumday <- summarise(timedat, totalsteps = sum(steps, na.rm=TRUE))
 hist(sumday$totalsteps, breaks = 9, main = "Histogram of Total Steps Per Day", xlab = "Total Steps Taken")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
 
 ```r
 meantot <- mean(sumday$totalsteps)
@@ -90,7 +82,7 @@ intday <- group_by(a, interval) %>% summarise(avgsteps = mean(steps, na.rm=TRUE)
 plot(intday$interval, intday$avgsteps, type="l", main="Time series: time interval vs average steps taken", xlab = "Day Interval (min)", ylab="average steps per day")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
 
 ```r
 maxint <- intday$interval[which(intday$avgsteps == max(intday$avgsteps))]
@@ -113,7 +105,7 @@ totalstep <- group_by(act, date) %>% summarise(totalsteps = sum(steps))
 hist(totalstep$totalsteps, breaks = 9, main = "Histogram of Total Steps Per Day (Imputed data)", xlab = "Total Steps Taken")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
 
 ```r
 options(scipen=999)
@@ -170,6 +162,6 @@ activityplot <- ggplot(data = daytypeact, aes(interval, avgsteps)) + geom_line(s
 print(activityplot)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
 
 There seems to be more activity around the 800-900 interval on weekdays, although the activity on weekends seems to be higher throughout the day. This may reflect the energy people must spend walking to work on weekdays vs going out on weekends.

@@ -14,13 +14,6 @@ head(a)
 str(a)
 ```
 
-Then split the data frame into convenient variables representing each name
-
-```{r, echo=TRUE}
-steps <- a$steps
-dates <- a$date
-interval <- a$interval
-```
 
 ## What is mean total number of steps taken per day?
 First determine the total number of steps per day; placed in a variable sumday
