@@ -86,9 +86,7 @@ Group data by interval, then summarize the interval data by average steps, which
 
 
 ```r
-library(dplyr)
-intdat <- group_by(a, interval)
-intday <- summarise(intdat, avgsteps = mean(steps, na.rm=TRUE))
+intday <- group_by(a, interval) %>% summarise(avgsteps = mean(steps, na.rm=TRUE))
 plot(intday$interval, intday$avgsteps, type="l", main="Time series: time interval vs average steps taken", xlab = "Day Interval (min)", ylab="average steps per day")
 ```
 
@@ -102,7 +100,22 @@ The highest activity interval on average is at the 835 interval.
 
 
 ## Imputing missing values
+Get vector of noncomplete cases
+Replace any missing step values with the mean of that time interval over all days.
 
 
+```r
+validdat <- !complete.cases(a)
+numinval <- sum(validdat)
+act <- merge(a, intday, by.x = "interval", by.y = "interval") %>% arrange(date, interval)
+act$steps = ifelse(is.na(act$steps), act$avgsteps, act$steps)
+totalstep <- group_by(act, date) %>% summarise(totalsteps = sum(steps))
+hist(totalstep$totalsteps, breaks = 9, main = "Histogram of Total Steps Per Day (Imputed data)", xlab = "Total Steps Taken")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
+The number of invalid/missing values in the data set is 2304.
+By imputing NA data with the average time interval of the missing time frame, it causes the data to be closer to a gaussian distribution.
 
 ## Are there differences in activity patterns between weekdays and weekends?
